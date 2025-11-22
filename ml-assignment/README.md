@@ -4,7 +4,9 @@ The idea is simple: the model looks at two previous words and predicts the next 
 
 
 Project Structure
+
 ml-assignment/
+
 │
 ├── data/
 │   └── alice_in_wonderland.txt
@@ -64,9 +66,9 @@ split into sentences
 
 tokenize using .split()
 
-replace rare words with <UNK>
+replace rare words with UNK
 
-add <s> <s> at the start and </s> at the end
+add s s at the start and /s at the end
 
 This keeps the input clean and easier for the trigram model to learn from.
 
@@ -77,7 +79,7 @@ The model stores trigram counts in a dictionary where each key is a pair of word
 
 Text generation works like this:
 
-Start with <s> <s>
+Start with s s
 
 Look up possible next words
 
@@ -85,7 +87,7 @@ Sample one using probability weights
 
 Shift the context window forward
 
-Stop at </s> or when max length is reached
+Stop at /s or when max length is reached
 
 This creates short, slightly unpredictable sentences that resemble the training text.
 
