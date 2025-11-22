@@ -1,83 +1,83 @@
-Evaluation Summary: Trigram Language Model
-
-This project involved building a trigram (N=3) language model from scratch. The model learns patterns of word sequences from a text corpus and generates new text by sampling from trigram probabilities. Here’s a brief overview of the key design choices I made during the implementation.
+This project involved creating a trigram (N=3) language model from scratch. The goal was to learn word-sequence patterns from a text corpus and generate new text based on trigram probabilities. Below is a summary of the main design decisions I made.
 
 1. N-Gram Count Storage
+ 
+I stored trigram counts using:
 
-To store trigram counts effectively, I used:
+A dictionary where each key is a pair of words (w1, w2).
 
-A dictionary with bigram keys:  
-(w1, w2) → Counter({w3: count})
+Each key maps to a Counter that stores possible next words and their frequencies.
 
-A separate Counter for bigram totals:  
-This keeps track of how often each (w1, w2) pair appears.
+A separate Counter stores the total number of times each (w1, w2) pair appears.
 
-This structure simplifies the implementation, supports quick lookups, and works well with Python’s built-in defaultdict and Counter.
+This structure keeps the implementation simple and allows for fast lookups when generating text.
 
-2. Text Cleaning & Preprocessing
+2. Text Cleaning and Preprocessing
 
-The preprocessing pipeline includes:
+The text was cleaned using the following steps:
 
-- Lowercasing all text
-- Removing unwanted characters using a regex (keeping only a–z, digits, and . ! ?)
-- Splitting text into sentences based on punctuation
-- Tokenizing each sentence using .split()
+Converting everything to lowercase.
 
-These steps ensure clean input for n-gram construction without adding unnecessary complexity.
+Removing characters that aren’t letters, digits, or basic punctuation.
+
+Splitting the text into sentences using punctuation marks.
+
+Tokenizing each sentence using Python’s .split().
+
+This keeps the text consistent and easier for the model to learn from.
 
 3. Handling Unknown Words
 
-To handle rare words, I:
+To reduce sparsity, I handled rare words using the following approach:
 
-Counted all words in the corpus.
+Counted all words in the dataset.
 
-Replaced words with a frequency of 1 or less with the token <UNK>.
+Any word that appeared once or less was replaced with a special token called UNK.
 
-This reduces sparsity and helps the model deal with new words smoothly during generation.
+This ensures that unusual words do not affect the model’s ability to calculate probabilities.
 
 4. Padding Sentences
 
-Since a trigram model needs two previous words for context, I padded each sentence as:
+Since a trigram model needs two previous words for context, I added padding around every sentence. The padding looks like:
 
-<s> <s> ... tokens ... </s>
+START START ...words... END.
 
-<s>: start-of-sentence token  
-</s>: end-of-sentence token  
+START = beginning-of-sentence marker.
 
-Padding ensures consistent trigram windows and provides clear start and end points.
+END = sentence-ending marker.
 
-5. Probability Calculation & Sampling
+Padding gives the model a consistent starting point and helps it know where a sentence ends.
 
-I calculated the probability of the next word using:
+5. Probability Calculation and Sampling
 
-P(w3 | w1, w2) = count(w1, w2, w3) / total_count(w1, w2)
+I calculated trigram probabilities with:
 
-For sampling, I used:
+P(next | w1, w2) = count(w1, w2, next) / total_count(w1, w2).
 
-random.choices() with probability weights.  
-This allows for variations in the generated text and avoids predictable outputs.
+To generate text, I used weighted sampling with random.choices(). This creates more natural and varied sentences instead of always picking the most frequent next word.
 
 6. Generate Function
 
-The generation process:
+The text generation process works as follows:
 
-Begins with <s> <s> as the initial context
+Start with the two START tokens.
 
-Samples the next word using trigram probabilities
+Sample the next word based on trigram probabilities.
 
-Slides the context window forward
+Shift the context window forward.
 
-Stops when </s> is produced or the maximum length is reached
+Stop when the END token appears or when the maximum length is reached.
 
-This creates sentences that reflect the structure and vocabulary of the training text.
+This results in sentences that resemble the structure and vocabulary of the training text.
 
-7. Overall Design Decisions
+7. Overall Design Choices
 
-I focused on clarity, readability, and simplicity:
+I kept the design simple and easy to follow:
 
-- Simple data structures
-- Clear preprocessing pipeline
-- Direct probability computation
-- Probabilistic text generation
+Clear preprocessing steps.
 
-The final model is easy to understand, extend, and debug while meeting all the assignment's functional requirements.
+Straightforward data structures.
+
+Direct probability calculations.
+
+Probabilistic text generation.
